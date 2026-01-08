@@ -1,33 +1,27 @@
 package http
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
+	"regexp"
 
-	"github.com/alexduzi/labcloudrun/internal/model"
+	"github.com/alexduzi/labcloudrun/internal/client"
 )
 
 type HttpHandler struct {
-	Addr string
+	Addr              string
+	cepApiClient      client.CepClientInterface
+	wheatherApiClient client.WeatherClientInterface
+	cepRegex          *regexp.Regexp
 }
 
-func NewHttpHandler(addr string) *HttpHandler {
+func NewHttpHandler(
+	addr string,
+	cepApiClient client.CepClientInterface,
+	wheatherApiClient client.WeatherClientInterface) *HttpHandler {
+
 	return &HttpHandler{
-		Addr: addr,
+		Addr:              addr,
+		cepApiClient:      cepApiClient,
+		wheatherApiClient: wheatherApiClient,
+		cepRegex:          regexp.MustCompile(`^\d{5}-?\d{3}$`),
 	}
-}
-
-func (h *HttpHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Request) {
-	temp := model.TemperatureResponse{
-		Celsius:    28.5,
-		Fahrenheit: 28.5,
-		Kelvin:     30.0,
-	}
-	json.NewEncoder(w).Encode(temp)
-}
-
-func (h *HttpHandler) ListenAndServe() error {
-	http.HandleFunc("/", h.GetTemperatureByCep)
-	return http.ListenAndServe(fmt.Sprintf(":%s", h.Addr), nil)
 }
