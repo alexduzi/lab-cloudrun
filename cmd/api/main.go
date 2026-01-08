@@ -16,9 +16,9 @@ import (
 
 func main() {
 	cepApiApiClient := client.NewCepClient()
-	wheatherApiClient := client.NewWeatherClient()
+	weatherApiClient := client.NewWeatherClient()
 
-	h := h.NewHttpHandler("8080", cepApiApiClient, wheatherApiClient)
+	h := h.NewHttpHandler("8080", cepApiApiClient, weatherApiClient)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", h.Addr),

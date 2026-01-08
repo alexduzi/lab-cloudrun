@@ -31,7 +31,7 @@ func (h *HttpHandler) GetTemperatureByCep(c *gin.Context) {
 		return
 	}
 
-	weatherModel, err := h.wheatherApiClient.GetWeather(c.Request.Context(), cepModel.Localidade)
+	weatherModel, err := h.weatherApiClient.GetWeather(c.Request.Context(), cepModel.Localidade)
 	if err != nil {
 		c.Error(err)
 		return

@@ -16,22 +16,25 @@ type CepClientInterface interface {
 
 type CepClient struct {
 	baseCepUrl string
+	client     *http.Client
 }
 
 func NewCepClient() *CepClient {
 	return &CepClient{
 		baseCepUrl: "https://viacep.com.br/ws/{cep}/json/",
+		client:     &http.Client{},
 	}
 }
 
 func (c CepClient) GetCep(ctx context.Context, cep string) (*model.ViacepResponse, error) {
-	client := http.Client{}
-	req, err := http.NewRequestWithContext(ctx, "GET", strings.Replace(c.baseCepUrl, "{cep}", cep, 1), nil)
+	cepApiUrl := strings.Replace(c.baseCepUrl, "{cep}", cep, 1)
+
+	req, err := http.NewRequestWithContext(ctx, "GET", cepApiUrl, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}

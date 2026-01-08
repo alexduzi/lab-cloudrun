@@ -17,7 +17,7 @@ type ViacepResponse struct {
 	Siafi       string  `json:"siafi"`
 }
 
-type WheaterResponse struct {
+type WeatherResponse struct {
 	Location struct {
 		Name           string  `json:"name"`
 		Region         string  `json:"region"`
