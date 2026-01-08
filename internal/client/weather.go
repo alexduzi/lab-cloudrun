@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
@@ -24,13 +26,15 @@ func NewWeatherClient() *WeatherClient {
 	return &WeatherClient{
 		appKey:     "6321a9495e9e46d5b1b230823260701",
 		baseApiUrl: "http://api.weatherapi.com/v1/current.json?key={appKey}&q={city}&aqi=no",
-		client:     &http.Client{},
+		client: &http.Client{
+			Timeout: 10 * time.Second,
+		},
 	}
 }
 
 func (w WeatherClient) GetWeather(ctx context.Context, city string) (*model.WeatherResponse, error) {
 	weatherApiUrl := strings.Replace(w.baseApiUrl, "{appKey}", w.appKey, 1)
-	weatherApiUrl = strings.Replace(weatherApiUrl, "{city}", city, 1)
+	weatherApiUrl = strings.Replace(weatherApiUrl, "{city}", url.QueryEscape(city), 1)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", weatherApiUrl, nil)
 	if err != nil {
@@ -48,11 +52,11 @@ func (w WeatherClient) GetWeather(ctx context.Context, city string) (*model.Weat
 		return nil, err
 	}
 
-	var wheatherRes model.WeatherResponse
-	err = json.Unmarshal(body, &wheatherRes)
+	var weatherRes model.WeatherResponse
+	err = json.Unmarshal(body, &weatherRes)
 	if err != nil {
 		return nil, err
 	}
 
-	return &wheatherRes, nil
+	return &weatherRes, nil
 }

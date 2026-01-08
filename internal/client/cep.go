@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
@@ -22,7 +23,9 @@ type CepClient struct {
 func NewCepClient() *CepClient {
 	return &CepClient{
 		baseCepUrl: "https://viacep.com.br/ws/{cep}/json/",
-		client:     &http.Client{},
+		client: &http.Client{
+			Timeout: 10 * time.Second,
+		},
 	}
 }
 
