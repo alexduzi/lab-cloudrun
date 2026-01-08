@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type ViacepResponse struct {
 	Erro        *string `json:"erro,omitempty"`
 	Cep         string  `json:"cep"`
@@ -73,4 +75,10 @@ type TemperatureResponse struct {
 	Celsius    float64 `json:"temp_C"`
 	Fahrenheit float64 `json:"temp_F"`
 	Kelvin     float64 `json:"temp_K"`
+}
+
+type StatusResponse struct {
+	Status    string    `json:"status" example:"healthy"`
+	Timestamp time.Time `json:"timestamp" example:"2024-01-01T00:00:00Z"`
+	Service   string    `json:"service" example:"lab-cloudrun-api"`
 }

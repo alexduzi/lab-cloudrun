@@ -3,12 +3,13 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
+	"github.com/alexduzi/labcloudrun/internal/config"
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
 
@@ -17,15 +18,13 @@ type WeatherClientInterface interface {
 }
 
 type WeatherClient struct {
-	appKey     string
-	baseApiUrl string
-	client     *http.Client
+	config *config.Config
+	client *http.Client
 }
 
-func NewWeatherClient() *WeatherClient {
+func NewWeatherClient(cfg *config.Config) *WeatherClient {
 	return &WeatherClient{
-		appKey:     "6321a9495e9e46d5b1b230823260701",
-		baseApiUrl: "http://api.weatherapi.com/v1/current.json?key={appKey}&q={city}&aqi=no",
+		config: cfg,
 		client: &http.Client{
 			Timeout: 10 * time.Second,
 		},
@@ -33,8 +32,10 @@ func NewWeatherClient() *WeatherClient {
 }
 
 func (w WeatherClient) GetWeather(ctx context.Context, city string) (*model.WeatherResponse, error) {
-	weatherApiUrl := strings.Replace(w.baseApiUrl, "{appKey}", w.appKey, 1)
-	weatherApiUrl = strings.Replace(weatherApiUrl, "{city}", url.QueryEscape(city), 1)
+	weatherApiUrl := fmt.Sprintf("%s?key=%s&q=%s&aqi=no",
+		w.config.WeatherBaseURL,
+		w.config.WeatherAPIKey,
+		url.QueryEscape(city))
 
 	req, err := http.NewRequestWithContext(ctx, "GET", weatherApiUrl, nil)
 	if err != nil {

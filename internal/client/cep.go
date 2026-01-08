@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alexduzi/labcloudrun/internal/config"
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
 
@@ -16,13 +17,13 @@ type CepClientInterface interface {
 }
 
 type CepClient struct {
-	baseCepUrl string
-	client     *http.Client
+	config *config.Config
+	client *http.Client
 }
 
-func NewCepClient() *CepClient {
+func NewCepClient(cfg *config.Config) *CepClient {
 	return &CepClient{
-		baseCepUrl: "https://viacep.com.br/ws/{cep}/json/",
+		config: cfg,
 		client: &http.Client{
 			Timeout: 10 * time.Second,
 		},
@@ -30,7 +31,7 @@ func NewCepClient() *CepClient {
 }
 
 func (c CepClient) GetCep(ctx context.Context, cep string) (*model.ViacepResponse, error) {
-	cepApiUrl := strings.Replace(c.baseCepUrl, "{cep}", cep, 1)
+	cepApiUrl := strings.Replace(c.config.ViaCEPBaseURL, "{cep}", cep, 1)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", cepApiUrl, nil)
 	if err != nil {

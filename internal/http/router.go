@@ -1,8 +1,6 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/alexduzi/labcloudrun/internal/http/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -12,14 +10,11 @@ func (h HttpHandler) SetupRouter() *gin.Engine {
 
 	router.Use(middleware.ErrorHandlerMiddleware())
 
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, "OK")
-	})
+	// Health and Readiness endpoints
+	router.GET("/health", h.HealthCheck)
+	router.GET("/readiness", h.ReadinessCheck)
 
-	router.GET("/readiness", func(c *gin.Context) {
-		c.JSON(http.StatusOK, "OK")
-	})
-
+	// Weather endpoint
 	router.GET("/:cep", h.GetTemperatureByCep)
 
 	return router

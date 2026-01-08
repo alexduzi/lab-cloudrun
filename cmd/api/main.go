@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -11,14 +12,39 @@ import (
 	"time"
 
 	"github.com/alexduzi/labcloudrun/internal/client"
+	"github.com/alexduzi/labcloudrun/internal/config"
 	h "github.com/alexduzi/labcloudrun/internal/http"
 )
 
-func main() {
-	cepApiApiClient := client.NewCepClient()
-	weatherApiClient := client.NewWeatherClient()
+// @title Weather
+// @version 1.0
+// @description API for fetching weather by zipcode
+// @termsOfService http://swagger.io/terms/
 
-	h := h.NewHttpHandler("8080", cepApiApiClient, weatherApiClient)
+// @contact.name Alex Duzi
+// @contact.email duzihd@gmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /
+// @schemes http https
+func main() {
+	// Load configuration
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	slog.Info("Configuration loaded", "port", cfg.Port)
+
+	// Initialize clients with config
+	cepApiApiClient := client.NewCepClient(cfg)
+	weatherApiClient := client.NewWeatherClient(cfg)
+
+	// Initialize HTTP handler
+	h := h.NewHttpHandler(cfg.Port, cepApiApiClient, weatherApiClient)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", h.Addr),

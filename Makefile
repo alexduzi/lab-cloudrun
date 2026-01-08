@@ -1,4 +1,4 @@
-.PHONY: help setup run build swagger test test-unit test-integration test-coverage test-coverage-html lint clean deps docker-build docker-run docker-stop docker-logs docker-compose-up docker-compose-down docker-compose-logs docker-clean
+.PHONY: help setup run build swagger test test-unit test-integration test-coverage test-coverage-html lint clean deps docker-build docker-run docker-stop docker-logs docker-compose-up docker-compose-up-build docker-compose-down docker-compose-logs docker-compose-restart docker-clean
 
 # Default target
 help:
@@ -21,14 +21,16 @@ help:
 	@echo "  make lint                - Run golangci-lint analysis"
 	@echo ""
 	@echo "Docker:"
-	@echo "  make docker-build        - Build Docker image"
-	@echo "  make docker-run          - Run Docker container"
-	@echo "  make docker-stop         - Stop and remove Docker container"
-	@echo "  make docker-logs         - View Docker container logs"
-	@echo "  make docker-compose-up   - Start application with Docker Compose"
-	@echo "  make docker-compose-down - Stop application with Docker Compose"
-	@echo "  make docker-compose-logs - View Docker Compose logs"
-	@echo "  make docker-clean        - Remove Docker images and containers"
+	@echo "  make docker-build            - Build Docker image"
+	@echo "  make docker-run              - Run Docker container"
+	@echo "  make docker-stop             - Stop and remove Docker container"
+	@echo "  make docker-logs             - View Docker container logs"
+	@echo "  make docker-compose-up       - Start application with Docker Compose"
+	@echo "  make docker-compose-up-build - Build and start with Docker Compose"
+	@echo "  make docker-compose-down     - Stop application with Docker Compose"
+	@echo "  make docker-compose-logs     - View Docker Compose logs"
+	@echo "  make docker-compose-restart  - Restart Docker Compose services"
+	@echo "  make docker-clean            - Remove Docker images and containers"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  make clean               - Clean build artifacts and test cache"
@@ -132,36 +134,57 @@ all: setup swagger build test lint
 # Build Docker image
 docker-build:
 	@echo "Building Docker image..."
-	docker build -t product-api:latest .
+	docker build -t lab-cloudrun-api:latest .
 	@echo "Docker image built successfully!"
 
 # Run Docker container
 docker-run:
 	@echo "Starting Docker container..."
-	docker run -d -p 8080:8080 --name product-api product-api:latest
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file not found. Run 'make setup' first."; \
+		exit 1; \
+	fi
+	docker run -d -p 8080:8080 --name lab-cloudrun-api --env-file .env lab-cloudrun-api:latest
 	@echo "Container started! Access at http://localhost:8080"
 	@echo "Health check: http://localhost:8080/health"
-	@echo "Swagger UI: http://localhost:8080/swagger/index.html"
+	@echo "API endpoint: http://localhost:8080/01310-100"
 
 # Stop and remove Docker container
 docker-stop:
 	@echo "Stopping Docker container..."
-	@docker stop product-api 2>/dev/null || true
-	@docker rm product-api 2>/dev/null || true
+	@docker stop lab-cloudrun-api 2>/dev/null || true
+	@docker rm lab-cloudrun-api 2>/dev/null || true
 	@echo "Container stopped and removed"
 
 # View Docker container logs
 docker-logs:
 	@echo "Showing container logs (Ctrl+C to exit)..."
-	docker logs -f product-api
+	docker logs -f lab-cloudrun-api
 
 # Start with Docker Compose
 docker-compose-up:
 	@echo "Starting application with Docker Compose..."
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file not found. Run 'make setup' first."; \
+		exit 1; \
+	fi
 	docker-compose up -d
 	@echo "Application started!"
 	@echo "Access at http://localhost:8080"
+	@echo "Health check: http://localhost:8080/health"
+	@echo "API endpoint: http://localhost:8080/01310-100"
 	@echo "View logs: make docker-compose-logs"
+
+# Build and start with Docker Compose
+docker-compose-up-build:
+	@echo "Building and starting application with Docker Compose..."
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file not found. Run 'make setup' first."; \
+		exit 1; \
+	fi
+	docker-compose up -d --build
+	@echo "Application built and started!"
+	@echo "Access at http://localhost:8080"
 
 # Stop Docker Compose
 docker-compose-down:
@@ -174,9 +197,16 @@ docker-compose-logs:
 	@echo "Showing Docker Compose logs (Ctrl+C to exit)..."
 	docker-compose logs -f
 
+# Restart Docker Compose services
+docker-compose-restart:
+	@echo "Restarting Docker Compose services..."
+	docker-compose restart
+	@echo "Services restarted"
+
 # Clean up Docker resources
 docker-clean: docker-stop
 	@echo "Cleaning up Docker resources..."
-	@docker rmi product-api:latest 2>/dev/null || true
+	@docker rmi lab-cloudrun-api:latest 2>/dev/null || true
+	@docker-compose down -v 2>/dev/null || true
 	@docker system prune -f
 	@echo "Docker cleanup complete"

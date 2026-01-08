@@ -8,6 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetTemperatureByCep godoc
+// @Summary Get Weather
+// @Description Get Weather by zipcode
+// @Tags products
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.WeatherResponse
+// @Failure 500 {string} string
+// @Router / [get]
 func (h *HttpHandler) GetTemperatureByCep(c *gin.Context) {
 	cep, exists := c.Params.Get("cep")
 	if !exists {
