@@ -1,14 +1,23 @@
 package http
 
 import (
+	_ "github.com/alexduzi/labcloudrun/docs"
 	"github.com/alexduzi/labcloudrun/internal/http/middleware"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (h HttpHandler) SetupRouter() *gin.Engine {
+	// Set Gin mode based on configuration
+	gin.SetMode(h.config.GinMode)
+
 	router := gin.Default()
 
 	router.Use(middleware.ErrorHandlerMiddleware())
+
+	// Swagger documentation
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Health and Readiness endpoints
 	router.GET("/health", h.HealthCheck)

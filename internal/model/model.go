@@ -2,21 +2,22 @@ package model
 
 import "time"
 
+// ViacepResponse represents the response from ViaCEP API
 type ViacepResponse struct {
-	Erro        *string `json:"erro,omitempty"`
-	Cep         string  `json:"cep"`
-	Logradouro  string  `json:"logradouro"`
-	Complemento string  `json:"complemento"`
-	Unidade     string  `json:"unidade"`
-	Bairro      string  `json:"bairro"`
-	Localidade  string  `json:"localidade"`
-	Uf          string  `json:"uf"`
-	Estado      string  `json:"estado"`
-	Regiao      string  `json:"regiao"`
-	Ibge        string  `json:"ibge"`
-	Gia         string  `json:"gia"`
-	Ddd         string  `json:"ddd"`
-	Siafi       string  `json:"siafi"`
+	Erro        *string `json:"erro,omitempty" example:"true"`
+	Cep         string  `json:"cep" example:"01310-100"`
+	Logradouro  string  `json:"logradouro" example:"Avenida Paulista"`
+	Complemento string  `json:"complemento" example:"de 612 a 1510 - lado par"`
+	Unidade     string  `json:"unidade" example:""`
+	Bairro      string  `json:"bairro" example:"Bela Vista"`
+	Localidade  string  `json:"localidade" example:"São Paulo"`
+	Uf          string  `json:"uf" example:"SP"`
+	Estado      string  `json:"estado" example:"São Paulo"`
+	Regiao      string  `json:"regiao" example:"Sudeste"`
+	Ibge        string  `json:"ibge" example:"3550308"`
+	Gia         string  `json:"gia" example:"1004"`
+	Ddd         string  `json:"ddd" example:"11"`
+	Siafi       string  `json:"siafi" example:"7107"`
 }
 
 type WeatherResponse struct {
@@ -71,14 +72,21 @@ type WeatherResponse struct {
 	} `json:"current"`
 }
 
+// TemperatureResponse represents temperature in different units
 type TemperatureResponse struct {
-	Celsius    float64 `json:"temp_C"`
-	Fahrenheit float64 `json:"temp_F"`
-	Kelvin     float64 `json:"temp_K"`
+	Celsius    float64 `json:"temp_C" example:"28.5"`
+	Fahrenheit float64 `json:"temp_F" example:"83.3"`
+	Kelvin     float64 `json:"temp_K" example:"301.65"`
 }
 
+// StatusResponse represents the health/readiness status response
 type StatusResponse struct {
 	Status    string    `json:"status" example:"healthy"`
 	Timestamp time.Time `json:"timestamp" example:"2024-01-01T00:00:00Z"`
 	Service   string    `json:"service" example:"lab-cloudrun-api"`
+}
+
+// ErrorResponse represents an error response
+type ErrorResponse struct {
+	Message string `json:"message" example:"invalid zipcode"`
 }

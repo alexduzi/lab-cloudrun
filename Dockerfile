@@ -40,6 +40,7 @@ USER appuser
 
 # Environment variables with defaults
 ENV PORT=8080 \
+    GIN_MODE=release \
     VIA_CEP_BASE_URL="https://viacep.com.br/ws/{cep}/json/" \
     WEATHER_BASE_URL="http://api.weatherapi.com/v1/current.json"
 

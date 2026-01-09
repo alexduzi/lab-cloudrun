@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	hErrors "github.com/alexduzi/labcloudrun/internal/http/error"
+	"github.com/alexduzi/labcloudrun/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,17 +17,23 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 			err := c.Errors.Last().Err
 
 			if errors.Is(err, hErrors.CepParamNotExists) {
-				c.JSON(http.StatusNotFound, "can not find zipcode")
+				c.JSON(http.StatusNotFound, model.ErrorResponse{
+					Message: "can not find zipcode",
+				})
 				return
 			}
 
 			if errors.Is(err, hErrors.CepCantFind) {
-				c.JSON(http.StatusNotFound, "can not find zipcode")
+				c.JSON(http.StatusNotFound, model.ErrorResponse{
+					Message: "can not find zipcode",
+				})
 				return
 			}
 
 			if errors.Is(err, hErrors.CepInvalid) {
-				c.JSON(http.StatusUnprocessableEntity, "invalid zipcode")
+				c.JSON(http.StatusUnprocessableEntity, model.ErrorResponse{
+					Message: "invalid zipcode",
+				})
 				return
 			}
 		}

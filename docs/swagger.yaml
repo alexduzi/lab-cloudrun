@@ -1,0 +1,109 @@
+basePath: /
+definitions:
+  model.ErrorResponse:
+    properties:
+      message:
+        example: invalid zipcode
+        type: string
+    type: object
+  model.StatusResponse:
+    properties:
+      service:
+        example: lab-cloudrun-api
+        type: string
+      status:
+        example: healthy
+        type: string
+      timestamp:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+    type: object
+  model.TemperatureResponse:
+    properties:
+      temp_C:
+        example: 28.5
+        type: number
+      temp_F:
+        example: 83.3
+        type: number
+      temp_K:
+        example: 301.65
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: duzihd@gmail.com
+    name: Alex Duzi
+  description: API for fetching weather by zipcode
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Weather
+  version: "1.0"
+paths:
+  /{cep}:
+    get:
+      consumes:
+      - application/json
+      description: Get temperature information by Brazilian postal code (CEP)
+      parameters:
+      - description: Brazilian postal code (CEP)
+        example: "01310100"
+        in: path
+        name: cep
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Temperature in Celsius, Fahrenheit and Kelvin
+          schema:
+            $ref: '#/definitions/model.TemperatureResponse'
+        "404":
+          description: can not find zipcode
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "422":
+          description: invalid zipcode
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get Temperature by CEP
+      tags:
+      - weather
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check if the service is healthy and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StatusResponse'
+      summary: Health Check
+      tags:
+      - health
+  /readiness:
+    get:
+      consumes:
+      - application/json
+      description: Check if the service is ready to accept traffic
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StatusResponse'
+      summary: Readiness Check
+      tags:
+      - health
+schemes:
+- http
+- https
+swagger: "2.0"

@@ -4,22 +4,23 @@ import (
 	"regexp"
 
 	"github.com/alexduzi/labcloudrun/internal/client"
+	"github.com/alexduzi/labcloudrun/internal/config"
 )
 
 type HttpHandler struct {
-	Addr             string
+	config           *config.Config
 	cepApiClient     client.CepClientInterface
 	weatherApiClient client.WeatherClientInterface
 	cepRegex         *regexp.Regexp
 }
 
 func NewHttpHandler(
-	addr string,
+	cfg *config.Config,
 	cepApiClient client.CepClientInterface,
 	weatherApiClient client.WeatherClientInterface) *HttpHandler {
 
 	return &HttpHandler{
-		Addr:             addr,
+		config:           cfg,
 		cepApiClient:     cepApiClient,
 		weatherApiClient: weatherApiClient,
 		cepRegex:         regexp.MustCompile(`^\d{5}-?\d{3}$`),

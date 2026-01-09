@@ -11,6 +11,7 @@ type Config struct {
 	WeatherAPIKey  string
 	ViaCEPBaseURL  string
 	WeatherBaseURL string
+	GinMode        string
 }
 
 var AppConfig *Config
@@ -24,6 +25,7 @@ func LoadConfig() (*Config, error) {
 	viper.SetDefault("PORT", "8080")
 	viper.SetDefault("VIA_CEP_BASE_URL", "https://viacep.com.br/ws/{cep}/json/")
 	viper.SetDefault("WEATHER_BASE_URL", "http://api.weatherapi.com/v1/current.json")
+	viper.SetDefault("GIN_MODE", "debug") // debug, release, or test
 
 	// Try to read .env file, but don't fail if it doesn't exist
 	if err := viper.ReadInConfig(); err != nil {
@@ -39,6 +41,7 @@ func LoadConfig() (*Config, error) {
 		WeatherAPIKey:  viper.GetString("WEATHER_API_KEY"),
 		ViaCEPBaseURL:  viper.GetString("VIA_CEP_BASE_URL"),
 		WeatherBaseURL: viper.GetString("WEATHER_BASE_URL"),
+		GinMode:        viper.GetString("GIN_MODE"),
 	}
 
 	// Validate required fields

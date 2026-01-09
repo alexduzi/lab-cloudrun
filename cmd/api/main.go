@@ -44,10 +44,10 @@ func main() {
 	weatherApiClient := client.NewWeatherClient(cfg)
 
 	// Initialize HTTP handler
-	h := h.NewHttpHandler(cfg.Port, cepApiApiClient, weatherApiClient)
+	h := h.NewHttpHandler(cfg, cepApiApiClient, weatherApiClient)
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", h.Addr),
+		Addr:    fmt.Sprintf(":%s", cfg.Port),
 		Handler: h.SetupRouter().Handler(),
 	}
 

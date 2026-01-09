@@ -1,0 +1,161 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API for fetching weather by zipcode",
+        "title": "Weather",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Alex Duzi",
+            "email": "duzihd@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "Check if the service is healthy and running",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StatusResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/readiness": {
+            "get": {
+                "description": "Check if the service is ready to accept traffic",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Readiness Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StatusResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/{cep}": {
+            "get": {
+                "description": "Get temperature information by Brazilian postal code (CEP)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weather"
+                ],
+                "summary": "Get Temperature by CEP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "01310100",
+                        "description": "Brazilian postal code (CEP)",
+                        "name": "cep",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Temperature in Celsius, Fahrenheit and Kelvin",
+                        "schema": {
+                            "$ref": "#/definitions/model.TemperatureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "can not find zipcode",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "invalid zipcode",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "invalid zipcode"
+                }
+            }
+        },
+        "model.StatusResponse": {
+            "type": "object",
+            "properties": {
+                "service": {
+                    "type": "string",
+                    "example": "lab-cloudrun-api"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "healthy"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                }
+            }
+        },
+        "model.TemperatureResponse": {
+            "type": "object",
+            "properties": {
+                "temp_C": {
+                    "type": "number",
+                    "example": 28.5
+                },
+                "temp_F": {
+                    "type": "number",
+                    "example": 83.3
+                },
+                "temp_K": {
+                    "type": "number",
+                    "example": 301.65
+                }
+            }
+        }
+    }
+}

@@ -9,14 +9,16 @@ import (
 )
 
 // GetTemperatureByCep godoc
-// @Summary Get Weather
-// @Description Get Weather by zipcode
-// @Tags products
+// @Summary Get Temperature by CEP
+// @Description Get temperature information by Brazilian postal code (CEP)
+// @Tags weather
 // @Accept json
 // @Produce json
-// @Success 200 {object} model.WeatherResponse
-// @Failure 500 {string} string
-// @Router / [get]
+// @Param cep path string true "Brazilian postal code (CEP)" example(01310100)
+// @Success 200 {object} model.TemperatureResponse "Temperature in Celsius, Fahrenheit and Kelvin"
+// @Failure 404 {object} model.ErrorResponse "can not find zipcode"
+// @Failure 422 {object} model.ErrorResponse "invalid zipcode"
+// @Router /{cep} [get]
 func (h *HttpHandler) GetTemperatureByCep(c *gin.Context) {
 	cep, exists := c.Params.Get("cep")
 	if !exists {
