@@ -13,7 +13,8 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
-		if len(c.Errors) > 0 {
+		// Only handle errors if response hasn't been written yet
+		if len(c.Errors) > 0 && !c.Writer.Written() {
 			err := c.Errors.Last().Err
 
 			if errors.Is(err, hErrors.CepParamNotExists) {
@@ -36,6 +37,11 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 				})
 				return
 			}
+
+			// Handle unexpected errors
+			c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+				Message: "internal server error",
+			})
 		}
 	}
 }
