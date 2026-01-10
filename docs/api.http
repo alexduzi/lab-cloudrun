@@ -1,2 +1,6 @@
 GET http://localhost:8080/130234346091 HTTP/1.1
 Content-Type: application/json
+
+###
+GET https://api.weatherapi.com/v1/current.json?key=6321a9495e9e4d5b1b230823260701&q=campinas&api=no HTTP/1.1
+Content-Type: application/json

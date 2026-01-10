@@ -1,4 +1,4 @@
-.PHONY: help setup run build swagger test test-unit test-integration test-coverage test-coverage-html lint clean deps docker-build docker-run docker-stop docker-logs docker-compose-up docker-compose-up-build docker-compose-down docker-compose-logs docker-compose-restart docker-clean
+.PHONY: help setup run build swagger test test-unit test-integration test-coverage test-coverage-html lint clean deps install-hooks docker-build docker-run docker-stop docker-logs docker-compose-up docker-compose-up-build docker-compose-down docker-compose-logs docker-compose-restart docker-clean
 
 # Default target
 help:
@@ -6,6 +6,7 @@ help:
 	@echo ""
 	@echo "Setup:"
 	@echo "  make setup               - Initial project setup (copy .env, install deps)"
+	@echo "  make install-hooks       - Install git hooks (pre-push with lint and tests)"
 	@echo ""
 	@echo "Local Development:"
 	@echo "  make run                 - Run the application locally"
@@ -124,6 +125,11 @@ deps:
 	go mod download
 	go mod tidy
 	@echo "Dependencies updated"
+
+# Install git hooks
+install-hooks:
+	@echo "Installing git hooks..."
+	@./scripts/install-hooks.sh
 
 # Run everything: setup, deps, swagger, build, test, and lint
 all: setup swagger build test lint
