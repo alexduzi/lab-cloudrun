@@ -14,19 +14,19 @@ Este projeto foi desenvolvido como parte do desafio Full Cycle para criar uma AP
 
 A API está disponível publicamente no Google Cloud Run:
 ```
-🔗 URL: [TODO: Adicionar URL do Cloud Run após deploy]
+🔗 URL: https://lab-cloudrun-729219189762.us-central1.run.app
 ```
 
 ### Exemplos de Uso
 ```bash
 # Consultar temperatura por CEP
-curl https://[TODO-URL]/01310100
+curl https://lab-cloudrun-729219189762.us-central1.run.app/01310100
 
 # Health check
-curl https://[TODO-URL]/health
+curl https://lab-cloudrun-729219189762.us-central1.run.app/health
 
 # Documentação Swagger
-https://[TODO-URL]/swagger/index.html
+https://lab-cloudrun-729219189762.us-central1.run.app/swagger/index.html
 ```
 
 ## 🚀 Funcionalidades
@@ -417,7 +417,7 @@ K = C + 273.15
 A documentação completa da API está disponível através do Swagger UI:
 
 - **Local:** http://localhost:8080/swagger/index.html
-- **Produção:** `[TODO-URL]/swagger/index.html`
+- **Produção:** https://lab-cloudrun-729219189762.us-central1.run.app/swagger/index.html
 
 ### Regenerar Documentação
 ```bash

@@ -31,7 +31,6 @@ coverage.html
 
 # Documentation
 README.md
-docs/
 *.md
 
 # Docker

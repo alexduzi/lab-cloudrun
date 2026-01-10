@@ -153,7 +153,7 @@ docker-run:
 	docker run -d -p 8080:8080 --name lab-cloudrun-api --env-file .env lab-cloudrun-api:latest
 	@echo "Container started! Access at http://localhost:8080"
 	@echo "Health check: http://localhost:8080/health"
-	@echo "API endpoint: http://localhost:8080/01310-100"
+	@echo "API endpoint: http://localhost:8080/api/v1/temperature/01310-100"
 
 # Stop and remove Docker container
 docker-stop:
@@ -178,7 +178,7 @@ docker-compose-up:
 	@echo "Application started!"
 	@echo "Access at http://localhost:8080"
 	@echo "Health check: http://localhost:8080/health"
-	@echo "API endpoint: http://localhost:8080/01310-100"
+	@echo "API endpoint: http://localhost:8080/api/v1/temperature/01310-100"
 	@echo "View logs: make docker-compose-logs"
 
 # Build and start with Docker Compose
