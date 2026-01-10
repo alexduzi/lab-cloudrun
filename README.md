@@ -20,7 +20,7 @@ A API está disponível publicamente no Google Cloud Run:
 ### Exemplos de Uso
 ```bash
 # Consultar temperatura por CEP
-curl https://lab-cloudrun-729219189762.us-central1.run.app/01310100
+curl https://lab-cloudrun-729219189762.us-central1.run.app/api/v1/temperature/01310100
 
 # Health check
 curl https://lab-cloudrun-729219189762.us-central1.run.app/health
@@ -245,7 +245,7 @@ make help                # Exibir ajuda com todos os comandos
 
 ### Weather
 
-#### GET /{cep}
+#### GET /api/v1/temperature/{cep}
 Retorna a temperatura atual para o CEP informado.
 
 **Parâmetros:**
@@ -253,8 +253,8 @@ Retorna a temperatura atual para o CEP informado.
 
 **Exemplos:**
 ```bash
-curl http://localhost:8080/01310100
-curl http://localhost:8080/01310-100
+curl http://localhost:8080/api/v1/temperature/01310100
+curl http://localhost:8080/api/v1/temperature/01310-100
 ```
 
 ### Health Checks
