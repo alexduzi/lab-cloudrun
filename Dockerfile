@@ -39,17 +39,17 @@ COPY --from=builder --chown=appuser:appuser /app/bin/api .
 USER appuser
 
 # Environment variables with defaults
-ENV PORT=8080 \
+ENV APP_PORT=8080 \
     GIN_MODE=release \
     VIA_CEP_BASE_URL="https://viacep.com.br/ws/{cep}/json/" \
     WEATHER_BASE_URL="http://api.weatherapi.com/v1/current.json"
 
-# Expose port (will use PORT env var at runtime)
-EXPOSE ${PORT}
+# Expose port (will use APP_PORT env var at runtime)
+EXPOSE ${APP_PORT}
 
-# Health check (using PORT env var)
+# Health check (using APP_PORT env var)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${APP_PORT}/health || exit 1
 
 # Run the application
 CMD ["./api"]

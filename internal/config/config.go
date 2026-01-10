@@ -22,7 +22,7 @@ func LoadConfig() (*Config, error) {
 	viper.AutomaticEnv()
 
 	// Set default values
-	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("APP_PORT", "8080")
 	viper.SetDefault("VIA_CEP_BASE_URL", "https://viacep.com.br/ws/{cep}/json/")
 	viper.SetDefault("WEATHER_BASE_URL", "http://api.weatherapi.com/v1/current.json")
 	viper.SetDefault("GIN_MODE", "debug") // debug, release, or test
@@ -37,7 +37,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config := &Config{
-		Port:           viper.GetString("PORT"),
+		Port:           viper.GetString("APP_PORT"),
 		WeatherAPIKey:  viper.GetString("WEATHER_API_KEY"),
 		ViaCEPBaseURL:  viper.GetString("VIA_CEP_BASE_URL"),
 		WeatherBaseURL: viper.GetString("WEATHER_BASE_URL"),
