@@ -197,7 +197,7 @@ func TestGetConfig_WhenConfigIsLoaded(t *testing.T) {
 	os.Setenv("WEATHER_API_KEY", "test-key")
 	defer os.Unsetenv("WEATHER_API_KEY")
 
-	LoadConfig()
+	_, _ = LoadConfig()
 
 	// act
 	config := GetConfig()
