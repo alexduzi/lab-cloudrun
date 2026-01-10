@@ -118,3 +118,17 @@ func TestConvertWeatherResponse_TypicalWinterDay(t *testing.T) {
 	assert.Equal(t, 23.0, result.Fahrenheit)
 	assert.Equal(t, 268.15, result.Kelvin)
 }
+
+func TestConvertWeatherResponse_RoundingPrecision(t *testing.T) {
+	// Arrange - Test case that previously had floating point precision issues
+	weather := model.WeatherResponse{}
+	weather.Current.TempC = 32.2
+
+	// Act
+	result := ConvertWeatherResponse(weather)
+
+	// Assert - All values should be rounded to exactly 2 decimal places
+	assert.Equal(t, 32.2, result.Celsius)
+	assert.Equal(t, 89.96, result.Fahrenheit) // Not 89.96000000000001
+	assert.Equal(t, 305.35, result.Kelvin)    // Not 305.34999999999997
+}

@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	cErrors "github.com/alexduzi/labcloudrun/internal/client/error"
 	"github.com/alexduzi/labcloudrun/internal/config"
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
@@ -47,6 +48,10 @@ func (w WeatherClient) GetWeather(ctx context.Context, city string) (*model.Weat
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, cErrors.NewWeatherClientHTTPError(resp.StatusCode)
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

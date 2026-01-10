@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	cErrors "github.com/alexduzi/labcloudrun/internal/client/error"
 	"github.com/alexduzi/labcloudrun/internal/config"
 	"github.com/alexduzi/labcloudrun/internal/model"
 )
@@ -43,6 +44,10 @@ func (c CepClient) GetCep(ctx context.Context, cep string) (*model.ViacepRespons
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, cErrors.NewCepClientHTTPError(resp.StatusCode)
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

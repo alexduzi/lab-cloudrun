@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	cErrors "github.com/alexduzi/labcloudrun/internal/client/error"
 	hErrors "github.com/alexduzi/labcloudrun/internal/http/error"
 	"github.com/alexduzi/labcloudrun/internal/model"
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,28 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 			if errors.Is(err, hErrors.CepInvalid) {
 				c.JSON(http.StatusUnprocessableEntity, model.ErrorResponse{
 					Message: "invalid zipcode",
+				})
+				return
+			}
+
+			// Handle CEP client errors
+			if errors.Is(err, cErrors.CepClientBadRequest) ||
+				errors.Is(err, cErrors.CepClientNotFound) ||
+				errors.Is(err, cErrors.CepClientInternalError) ||
+				errors.Is(err, cErrors.CepClientUnexpectedError) {
+				c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+					Message: "internal server error",
+				})
+				return
+			}
+
+			// Handle Weather client errors
+			if errors.Is(err, cErrors.WeatherClientBadRequest) ||
+				errors.Is(err, cErrors.WeatherClientNotFound) ||
+				errors.Is(err, cErrors.WeatherClientInternalError) ||
+				errors.Is(err, cErrors.WeatherClientUnexpectedError) {
+				c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+					Message: "internal server error",
 				})
 				return
 			}

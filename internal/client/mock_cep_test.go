@@ -2,33 +2,16 @@ package client
 
 import (
 	"context"
-	"net/http"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/alexduzi/labcloudrun/internal/config"
 	"github.com/alexduzi/labcloudrun/internal/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
-
-type CepClientStub struct {
-	config *config.Config
-	client *http.Client
-}
-
-func NewCepClientStub(cfg *config.Config) *CepClientStub {
-	return &CepClientStub{
-		config: cfg,
-		client: &http.Client{
-			Timeout: 10 * time.Second,
-		},
-	}
-}
-
-func (c CepClientStub) GetCep(ctx context.Context, cep string) (*model.ViacepResponse, error) {
-	return nil, nil
-}
 
 // CepClientStubTestSuite é a test suite para CepClientStub
 type CepClientStubTestSuite struct {
@@ -61,10 +44,18 @@ func (suite *CepClientStubTestSuite) TestNewCepClientStub() {
 func (suite *CepClientStubTestSuite) TestGetCep_ReturnsNil() {
 	ctx := context.Background()
 
-	result, err := suite.client.GetCep(ctx, "01310100")
+	cep := "01310100"
 
-	assert.Nil(suite.T(), result)
+	resMock := model.GetViacepResponseMock(cep)
+
+	suite.client.On("GetCep", ctx, cep).Return(resMock, nil)
+
+	result, err := suite.client.GetCep(ctx, cep)
+
+	assert.NotNil(suite.T(), result)
 	assert.Nil(suite.T(), err)
+
+	suite.client.AssertExpectations(suite.T())
 }
 
 // TestGetCep_WithDifferentCeps testa GetCep com diferentes CEPs
@@ -81,13 +72,32 @@ func (suite *CepClientStubTestSuite) TestGetCep_WithDifferentCeps() {
 		{"CEP vazio", ""},
 	}
 
+	resMock := model.GetViacepResponseMock("cep")
+
 	for _, tc := range testCases {
+		resMock.Cep = tc.cep
+
+		if tc.cep != "" {
+			suite.client.On("GetCep", ctx, tc.cep).Return(resMock, nil)
+		} else {
+			suite.client.On("GetCep", ctx, tc.cep).Return(resMock, fmt.Errorf("Parameter cep is missing."))
+		}
+
 		suite.Run(tc.name, func() {
+
 			result, err := suite.client.GetCep(ctx, tc.cep)
-			assert.Nil(suite.T(), result)
-			assert.Nil(suite.T(), err)
+			if tc.cep != "" {
+				assert.NotNil(suite.T(), result)
+				assert.Nil(suite.T(), err)
+			} else {
+				assert.Nil(suite.T(), result)
+				assert.NotNil(suite.T(), err)
+				assert.Errorf(suite.T(), err, "Parameter cep is missing.")
+			}
 		})
 	}
+
+	suite.client.AssertExpectations(suite.T())
 }
 
 // TestGetCep_WithContext testa GetCep com diferentes contextos
@@ -100,13 +110,21 @@ func (suite *CepClientStubTestSuite) TestGetCep_WithContext() {
 		{"Context.TODO", context.TODO()},
 	}
 
+	cep := "01310100"
+
+	resMock := model.GetViacepResponseMock(cep)
+
 	for _, tc := range testCases {
+		suite.client.On("GetCep", tc.ctx, cep).Return(resMock, nil)
+
 		suite.Run(tc.name, func() {
-			result, err := suite.client.GetCep(tc.ctx, "01310100")
-			assert.Nil(suite.T(), result)
+			result, err := suite.client.GetCep(tc.ctx, cep)
+			assert.NotNil(suite.T(), result)
 			assert.Nil(suite.T(), err)
 		})
 	}
+
+	suite.client.AssertExpectations(suite.T())
 }
 
 // TestGetCep_ImplementsInterface verifica se CepClientStub implementa CepClientInterface
@@ -160,12 +178,20 @@ func TestCepClientStub_GetCep_MultipleCallsConsistency(t *testing.T) {
 	client := NewCepClientStub(cfg)
 	ctx := context.Background()
 
+	cep := "01310100"
+
+	resMock := model.GetViacepResponseMock(cep)
+
+	client.On("GetCep", ctx, cep).Return(resMock, nil)
+
 	// Múltiplas chamadas devem retornar o mesmo resultado
 	for i := 0; i < 5; i++ {
-		result, err := client.GetCep(ctx, "01310100")
-		assert.Nil(t, result)
+		result, err := client.GetCep(ctx, cep)
+		assert.NotNil(t, result)
 		assert.Nil(t, err)
 	}
+
+	client.AssertExpectations(t)
 }
 
 func TestCepClientStub_GetCep_WithCanceledContext(t *testing.T) {
@@ -177,9 +203,57 @@ func TestCepClientStub_GetCep_WithCanceledContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // Cancela o contexto antes da chamada
 
+	client.On("GetCep", ctx, mock.Anything).Return(nil, context.Canceled)
+
 	result, err := client.GetCep(ctx, "01310100")
 
-	// O stub não verifica contexto cancelado, retorna nil/nil sempre
 	assert.Nil(t, result)
-	assert.Nil(t, err)
+	assert.ErrorIs(t, err, context.Canceled)
+
+	client.AssertExpectations(t)
+}
+
+func TestCepClientStub_GetCep_WithTimeout(t *testing.T) {
+	cfg := &config.Config{
+		ViaCEPBaseURL: "https://viacep.com.br/ws/{cep}/json/",
+	}
+	client := NewCepClientStub(cfg)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Millisecond)
+	defer cancel()
+
+	time.Sleep(2 * time.Millisecond) // Garante que o timeout aconteceu
+
+	client.On("GetCep", ctx, mock.Anything).Return(nil, context.DeadlineExceeded)
+
+	result, err := client.GetCep(ctx, "01310100")
+
+	assert.Nil(t, result)
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
+
+	client.AssertExpectations(t)
+}
+
+func TestCepClientStub_HTTPClient_Timeout(t *testing.T) {
+	cfg := &config.Config{
+		ViaCEPBaseURL: "https://viacep.com.br/ws/{cep}/json/",
+	}
+	client := NewCepClientStub(cfg)
+
+	assert.Equal(t, 10*time.Second, client.client.Timeout)
+}
+
+func TestCepClientStub_ConfigurationValues(t *testing.T) {
+	expectedBaseURL := "https://viacep.com.br/ws/{cep}/json/"
+
+	cfg := &config.Config{
+		ViaCEPBaseURL: "https://viacep.com.br/ws/{cep}/json/",
+		Port:          "3000",
+		GinMode:       "release",
+	}
+	client := NewCepClientStub(cfg)
+
+	assert.Equal(t, expectedBaseURL, client.config.ViaCEPBaseURL)
+	assert.Equal(t, "3000", client.config.Port)
+	assert.Equal(t, "release", client.config.GinMode)
 }
