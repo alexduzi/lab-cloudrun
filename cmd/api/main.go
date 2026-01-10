@@ -16,7 +16,7 @@ import (
 	h "github.com/alexduzi/labcloudrun/internal/http"
 )
 
-// @title Weather
+// @title Weather API
 // @version 1.0
 // @description API for fetching weather by zipcode
 // @termsOfService http://swagger.io/terms/
@@ -27,7 +27,6 @@ import (
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:8080
 // @BasePath /
 // @schemes http https
 func main() {
