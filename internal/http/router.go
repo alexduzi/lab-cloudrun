@@ -24,7 +24,9 @@ func (h HttpHandler) SetupRouter() *gin.Engine {
 	router.GET("/readiness", h.ReadinessCheck)
 
 	// Weather endpoint
-	router.GET("/:cep", h.GetTemperatureByCep)
+	v1 := router.Group("/api/v1")
+	v1.GET("/temperature/", h.GetTemperatureWithoutCep)
+	v1.GET("/temperature/:cep", h.GetTemperatureByCep)
 
 	return router
 }

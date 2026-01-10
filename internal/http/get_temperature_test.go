@@ -213,7 +213,7 @@ func (h *HttpHandlerTestSuite) TestHttpHandler_GetTemperatureByCep_CepParamNotEx
 	handler := NewHttpHandler(config, h.cepClientStub, h.weatherClientStub)
 
 	router.Use(middleware.ErrorHandlerMiddleware())
-	router.GET("/", handler.GetTemperatureByCep)
+	router.GET("/", handler.GetTemperatureWithoutCep)
 
 	req, _ := http.NewRequest("GET", "/", nil)
 

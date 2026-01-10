@@ -23,6 +23,51 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/temperature/{cep}": {
+            "get": {
+                "description": "Get temperature information by Brazilian postal code (CEP)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weather"
+                ],
+                "summary": "Get Temperature by CEP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "01310100",
+                        "description": "Brazilian postal code (CEP)",
+                        "name": "cep",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Temperature in Celsius, Fahrenheit and Kelvin",
+                        "schema": {
+                            "$ref": "#/definitions/model.TemperatureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "can not find zipcode",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "invalid zipcode",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Check if the service is healthy and running",
@@ -64,51 +109,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.StatusResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/{cep}": {
-            "get": {
-                "description": "Get temperature information by Brazilian postal code (CEP)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "weather"
-                ],
-                "summary": "Get Temperature by CEP",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "01310100",
-                        "description": "Brazilian postal code (CEP)",
-                        "name": "cep",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Temperature in Celsius, Fahrenheit and Kelvin",
-                        "schema": {
-                            "$ref": "#/definitions/model.TemperatureResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "can not find zipcode",
-                        "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "invalid zipcode",
-                        "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }

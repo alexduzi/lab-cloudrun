@@ -43,7 +43,7 @@ info:
   title: Weather
   version: "1.0"
 paths:
-  /{cep}:
+  /api/v1/temperature/{cep}:
     get:
       consumes:
       - application/json
