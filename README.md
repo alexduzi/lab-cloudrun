@@ -109,7 +109,7 @@ cp .env.example .env
 
 | Variável | Descrição | Padrão | Obrigatória |
 |----------|-----------|--------|-------------|
-| `APP_PORT` | Porta da aplicação | `8080` | Não |
+| `PORT` | Porta da aplicação | `8080` | Não |
 | `WEATHER_API_KEY` | Chave da API WeatherAPI | - | **Sim** |
 | `GIN_MODE` | Modo do Gin (debug/release/test) | `debug` | Não |
 | `VIA_CEP_BASE_URL` | URL base da API ViaCEP | `https://viacep.com.br/ws/{cep}/json/` | Não |
@@ -457,7 +457,7 @@ make docker-logs
 
 **Solução:** Alterar porta no `.env`:
 ```bash
-APP_PORT=8081
+PORT=8081
 ```
 
 ## 🤝 Contribuindo

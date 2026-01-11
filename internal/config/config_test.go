@@ -18,7 +18,7 @@ func TestLoadConfig_WithDefaultValues(t *testing.T) {
 	resetViperAndConfig()
 
 	// Garantir que não há variáveis de ambiente configuradas
-	os.Unsetenv("APP_PORT")
+	os.Unsetenv("PORT")
 	os.Unsetenv("WEATHER_API_KEY")
 	os.Unsetenv("VIA_CEP_BASE_URL")
 	os.Unsetenv("WEATHER_BASE_URL")
@@ -42,14 +42,14 @@ func TestLoadConfig_WithEnvironmentVariables(t *testing.T) {
 	// arrange
 	resetViperAndConfig()
 
-	os.Setenv("APP_PORT", "3000")
+	os.Setenv("PORT", "3000")
 	os.Setenv("WEATHER_API_KEY", "test-api-key-123")
 	os.Setenv("VIA_CEP_BASE_URL", "https://custom-cep-api.com")
 	os.Setenv("WEATHER_BASE_URL", "https://custom-weather-api.com")
 	os.Setenv("GIN_MODE", "release")
 
 	defer func() {
-		os.Unsetenv("APP_PORT")
+		os.Unsetenv("PORT")
 		os.Unsetenv("WEATHER_API_KEY")
 		os.Unsetenv("VIA_CEP_BASE_URL")
 		os.Unsetenv("WEATHER_BASE_URL")
@@ -73,11 +73,11 @@ func TestLoadConfig_WithPartialEnvironmentVariables(t *testing.T) {
 	// arrange
 	resetViperAndConfig()
 
-	os.Setenv("APP_PORT", "9090")
+	os.Setenv("PORT", "9090")
 	os.Setenv("WEATHER_API_KEY", "my-api-key")
 
 	defer func() {
-		os.Unsetenv("APP_PORT")
+		os.Unsetenv("PORT")
 		os.Unsetenv("WEATHER_API_KEY")
 	}()
 
@@ -130,14 +130,14 @@ func TestLoadConfig_MultipleCallsOverwriteAppConfig(t *testing.T) {
 	// arrange
 	resetViperAndConfig()
 
-	os.Setenv("APP_PORT", "8080")
-	defer os.Unsetenv("APP_PORT")
+	os.Setenv("PORT", "8080")
+	defer os.Unsetenv("PORT")
 
 	// act
 	config1, err1 := LoadConfig()
 
 	resetViperAndConfig()
-	os.Setenv("APP_PORT", "9000")
+	os.Setenv("PORT", "9000")
 
 	config2, err2 := LoadConfig()
 
@@ -252,8 +252,8 @@ func TestLoadConfig_WithDifferentPorts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// arrange
 			resetViperAndConfig()
-			os.Setenv("APP_PORT", tt.port)
-			defer os.Unsetenv("APP_PORT")
+			os.Setenv("PORT", tt.port)
+			defer os.Unsetenv("PORT")
 
 			// act
 			config, err := LoadConfig()

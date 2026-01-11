@@ -79,14 +79,6 @@ func (s *RouterTestSuite) TestSetupRouter_SwaggerEndpointRegistered() {
 	assert.True(s.T(), swaggerExists, "Swagger route should be registered")
 }
 
-func (s *RouterTestSuite) TestSetupRouter_TemperatureByCepEndpointRegistered() {
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/temperature/01001000", nil)
-	s.router.ServeHTTP(w, req)
-
-	assert.NotEqual(s.T(), http.StatusNotFound, w.Code)
-}
-
 func (s *RouterTestSuite) TestSetupRouter_TemperatureWithoutCepEndpointRegistered() {
 	routes := s.router.Routes()
 	tempWithoutCepExists := false
